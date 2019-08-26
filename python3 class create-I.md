@@ -149,11 +149,11 @@ False相当于0，False==0为真，但是不等于2,3,4，
 
 
 
-# tensorflow常用函数
+## tensorflow常用函数
 
-## [tf.kears.backend.gather(reference,indices)](https://www.tensorflow.org/api_docs/python/tf/keras/backend/gather) 按照索引从tensor里拿出向量。
+### [tf.kears.backend.gather(reference,indices)](https://www.tensorflow.org/api_docs/python/tf/keras/backend/gather) 按照索引从tensor里拿出向量。
 
-## [tf.image.non_max_suppression()](https://www.tensorflow.org/api_docs/python/tf/image/non_max_suppression)非最大抑制函数
+### [tf.image.non_max_suppression()](https://www.tensorflow.org/api_docs/python/tf/image/non_max_suppression)非最大抑制函数
 
 
 
