@@ -231,3 +231,73 @@ puts会将一个换行符写到标准输出中
 
 也不建议使用puts，一面记住它在最后是否添加了一个换行符。
 
+## 标准IO库效率讨论
+
+总体上使用标准IO库是比使用read和write要慢。但是对于复杂的应用程序，这些并不是影响程序效率的关键因素。具体讨论略。
+
+## 二进制IO
+
+如果进行二进制IO，我们更希望能够一次读写完一个完整的结构。getc和putc读写结构，需要使用循环。fgets和fputs遇到null字节停止，但是结构中可能包含null。
+
+```c
+//stdio.h
+size_t fread(void *restrict ptr, size_t size, size_t nobj, FILE *restrict fp);
+size_t fwrite(const void *restrict ptr, size_t size, size_t nobj, FILE *restrict fp);
+//返回读或者写的对象数
+```
+
+- ptr 开始地址
+- size 每个单位的大小
+- 写的数量
+- 文件指针
+
+常见用法：
+
+1. 读写一个二进制数组。
+
+   ```c
+   float data[10];
+   if(fwrite(&data[2], sizeof(float), 4, fp)!=4)
+       err_sys("fwrite error")
+   ```
+
+2. 读写一个结构。
+
+   ```c
+   struct{
+       short count;
+       long total;
+       char name[NAMESIZE];
+   }item; //item是一个实例
+   if (fwrite(&item, sizeof(item)，1，fp) !=1)
+       err_sys("fwrite error");
+   ```
+
+   如果出错或者到达文件尾端，返回的字数少于nobj。在这种情况下，使用ferror和feof来判断是出错了呢还是到头了呢。
+
+## 定位流
+
+三种方法定位IO流。
+
+- `ftell`和`fseek`，假定文件的位置可以存放在`长整型`
+- `ftello`和`fseeko，文件偏移量可以不必是长整形，使用off_t数据类型`
+- `fgetpos`和`fsetpos`，ISO C引入，使用抽象数据类型fpos_t记录文件位置。可以根据定义为一个足够大的数来记录文件的位置
+
+非UNIX系统应用程序应该使用fgetpos和fsetpos
+
+```c
+//stdio.h
+long fell(FILE *fp);
+//成功返回当前文件位置，出错返回-1
+int fseek(FILE *fp, long offset, int whence);
+//成功返回0，出错返回-1
+void rewind(FILE *fp);
+```
+
+- offset 指定偏移量
+- whence 解释偏移量计算方法，与lseek相同
+
+
+
+对于二进制文件，`文件位置`从`文件起始`开始计算，以`字节`为单位。
+
