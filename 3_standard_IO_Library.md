@@ -292,12 +292,123 @@ long fell(FILE *fp);
 int fseek(FILE *fp, long offset, int whence);
 //成功返回0，出错返回-1
 void rewind(FILE *fp);
+
+//除了偏移量的类型是off_t，其他和上面相同
+off_t ftello(FILE *fp);
+int fseeko(FILE *fp, off_t offset, int whence);
+//0 -1
+
 ```
 
 - offset 指定偏移量
 - whence 解释偏移量计算方法，与lseek相同
 
-
+  - SEEK_SET 偏移量从文件开始处计算，便宜offset字节。
+  - SEEK_CUR 从当前位置算，offset可以正或者负
+  - SEEK_END 从最后开始算，文件长度+offset ，offset可正可负
 
 对于二进制文件，`文件位置`从`文件起始`开始计算，以`字节`为单位。
+
+```c
+//stdio.h
+int fgetpos(FILE *restrict fp, fpos_t *restrict pos);
+int fsetpos(FILE *fp, const fpos_t);
+//成功0 出错非0
+```
+
+fgetpos 将文件位置指示器存入有pos指向的对象中。
+
+## 格式化IO
+
+### 输出 printf系列
+
+#### 原型
+
+```c
+//stdio.h
+int printf(const char * restrict format, ...);
+int fprintf(FILE *restrict fp, const char *restrict format, ...); //可以制定文件
+int dprintf(int fd, const char *restrict format, ...);
+//成功返回输出字符数，出错返回负值
+int sprintf(char *restrict buf, const char *restrict format, ...);
+//成功返回存入数组的字符数，编码出错返回负
+int snprintf(char *restrict buf, size_t n, const char *restrict format, ...);
+//若缓冲区足够大，返回存入数组的字符数，编码出错返回负值
+```
+
+sprintf将格式化的字符送入数组buf中。sprintf在数组的尾段自动加一个null字节，但是该字节不包含在返回值内。**有可能造成缓冲区溢出，需要注意使用**
+
+snprintf是为了解决缓冲区溢出的，缓冲区是一个显式的参数，草果缓冲区尾端的字符会被丢弃。
+
+#### 格式控制
+
+```
+%[flags][fldwidth][precision][lenmodifier]convtype
+```
+
+- flags
+
+  ![1568193117290](/home/spade/Documents/markdown/linux_programing_pics/5/1568193117290.png)
+
+- fldwidth 是最小字段宽度
+- precision 精度    `.4` 保留4为小数
+- lenmodifier 说明参数长度
+
+![1568193205860](/home/spade/Documents/markdown/linux_programing_pics/5/1568193205860.png)
+
+- convtype 必写的，如何解释参数、格式
+
+![1568193261256](/home/spade/Documents/markdown/linux_programing_pics/5/1568193261256.png)
+
+### 格式化输入scanf族
+
+#### 原型
+
+```c
+//stdio.h
+int scanf(const char *restrict format, ...);
+int fscanf(FILE *restrict fp, const char *restrict format, ...);
+int sscanf(const char *restrict buf, const char *restrict format, ...);
+//返回赋值的输入项数，输出出错或者任意转换前到达文件尾端，返回EOF
+
+```
+
+format说明了如何转换参数，对变量进行赋值。
+
+#### format
+
+```c
+%[*][fldwidth][m][lenmodifier]convtype
+```
+
+- *用于抑制转换。
+- fldwidth 最大宽度，最大字符数量
+- lemodifier 转换结果赋值的参数大小
+- convtype同上
+
+## 临时文件 tmpnam、tmpfile
+
+```c
+//stdio.h
+char *tmpnam(char *ptr);
+
+FILE *tmpfile(void);
+//成功返回文件指针，失败NULL
+```
+
+tmpnam创建一个唯一的路径名。得到这个之后手动创建文件。ptr初始化为长度至少L_tmpnam个字符的数组。（stdio.h有定义）
+
+tmpfile 创建一个临时的二进制文件(wb+)，在关闭文件或者程序结束自动删除。
+
+## 内存流
+
+将内存区当做文件流的方式处理。通俗理解可以把一个demo[100]的内存区按照文件流的方式处理、
+
+```c
+//stdio.h
+FILE *fmemopen(void *restrict buf, size_t size, const char *restrict type);
+//成功返回指针，失败返回NULL
+```
+
+具体要求见书。P171
 
