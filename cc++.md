@@ -183,3 +183,196 @@ s=alloc(strlen('ABCD')+1) //因为s[4]应该存放 \0
 
 
 
+# 异常
+
+## 不用异常对程序出错的处理办法
+
+### 调用abort()
+
+如果出现异常情况，调用abort()，然后中程序，并且告诉操作系统或者他的父进程，处理失败。abort()是否刷新文件缓冲区(存储读写到文件中的数据的内存区)，取决于库的具体实现。也可以使用exit()，刷新文件缓冲区，但是不显示消息。
+
+```c#
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+double div(double a, double b);
+int main(argc,char * argv[])
+{
+    double x, y;
+    while (cin >> x >> y){
+        cout << Answer is << div(x,y)<<endl;
+        return 0;
+    }
+}
+double div(double a, double b)
+{
+    if (b==0){
+        cout << "b can't be zero!";
+        abort();
+    }
+    return a/b;
+}
+```
+
+Note: 调用abort() 直接终止程序，而不返回到main()。为了避免终止，函数在调用时要依靠程序员目测检查，这是很容易出现问题的。
+
+### 返回错误码
+
+```c
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+bool div(double a, double b，double *ans);
+int main(argc,char * argv[])
+{
+    double x, y, ans;
+    while (cin >> x >> y){
+        if(div(x,y,&ans)){
+            cout<<answer is <<ans<<endl;
+        }
+        else
+            cout << "b can't be zero!"
+        
+        return 0;
+    }
+}
+bool div(double a, double b)
+{
+    if (b==0){
+        return false;
+    }
+   	*ans = a/b;
+    return true;
+}
+```
+
+这里引入了第三个参数指针，用来存放结果。（c++中也可以使用引用）。
+
+通过检查返回值，来确定函数内部是否发生了异常。且不中断主程序。
+
+也可以设置一个全局变量，如果出现问题将这个全局变量设置为特定值，然后检查该变量。例如：c库标准输入输出流中getchar到达文件末尾和出错返回都是EOF。具体是哪种情况需要使用函数来访问状态变量确定。
+
+
+
+## 异常机制
+
+出错的情况使用throw抛出异常。throw语句实质是跳转。
+
+使用try catch处理捕获异常
+
+- 在try外面，无法处理异常
+- throw将控制权返回给调用程序。
+
+### 异常组成
+
+
+
+### 抛出异常的类型
+
+抛出的异常可以是任意类型，字符串、int等，但是通常抛出是异常类。异常类可以自己构建，也可以使用库中的。
+
+#### 字符串
+
+#### 类
+
+
+
+## 异常原理和特性
+
+### 栈退解
+
+### 栈退解和return区别
+
+### throw抛出和接收注意
+
+
+
+## 标准类库exception
+
+### exception
+
+### exception派生类
+
+
+
+## 异常迷失
+
+异常引发之后，有两种情况会导致问题：
+
+- 意外异常
+
+  简单来说，如果带异常规范的函数中引发的，必须与规范列表中的某种异常匹配。如果异常不在规范列表中，成为意外异常。默认情况下会导致程序终止。
+
+- 未捕获异常
+
+  没有try   catch块，函数抛出异常，默认情况下，导致程序异常终止。
+
+
+
+## 异常的注意事项
+
+缺点：
+
+- 增加代码量
+- 降低程序运行速度
+- 异常规范不适用于模板，因为模板函数引发的异常可能随着特定的具体化而异
+- 异常和动态内存并非能够协同工作，可能造成`内存泄漏`
+
+### 造成内存泄露的原因
+
+#### 正常情况：
+
+```c++
+void test1(int n)
+{
+    string msg("I love c++");
+    ...; //此处省略一万字代码
+    if(somewrong)
+        throw exception(); //抛出exception异常类
+    ...; //此处省略一万行代码
+    return;
+}
+```
+
+上述情况，string内部采用动态内存非配，当函数结束的时候，string的析构函数会释放msg申请的内存。即使`throw`语句会提前终止函数，但是由于栈退解原理，析构函数仍然能够正确调用，内存会被正确管理。
+
+#### 内存泄露情况：
+
+```c++
+void test2(int)
+{
+    double * msg = new double[n];  //动态申请内存 c常用malloc
+    ... ; //此处省略一万行代码
+    if (somewrong)
+        throw exception(); //抛出异常
+    ... ; //次数省略一万行
+    delete [] msg;
+    return;
+}
+```
+
+`throw`过早的终止函数，意味着程序无法执行delete [] msg 。栈退解时，只是删除了栈中的指针变量 msg，而指向的内存并没有被释放掉，并且再也无法找到。这时发生了内存泄露。
+
+#### 解决方案：
+
+这种泄露的解决办法之一，就是在引发异常的函数中，捕获异常，处理之后再重新引发异常。
+
+```c++
+void test3(int)
+{
+    double * msg = new double[n];
+    ... ; //此处省略一万行代码
+    
+    //在这里使用try catch
+    try{
+        if(somewrong)
+            throw exception();
+    }
+    catch(exception & ex)  //在函数内捕获这个异常
+    {
+        delete [] msg ; //清除内存
+        throw; //再次抛出
+    }
+}
+```
+
