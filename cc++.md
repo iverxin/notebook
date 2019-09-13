@@ -236,7 +236,7 @@ int main(argc,char * argv[])
         return 0;
     }
 }
-bool div(double a, double b)
+bool div(double a, double b， double *ans)
 {
     if (b==0){
         return false;
@@ -251,6 +251,34 @@ bool div(double a, double b)
 通过检查返回值，来确定函数内部是否发生了异常。且不中断主程序。
 
 也可以设置一个全局变量，如果出现问题将这个全局变量设置为特定值，然后检查该变量。例如：c库标准输入输出流中getchar到达文件末尾和出错返回都是EOF。具体是哪种情况需要使用函数来访问状态变量确定。
+
+### 使用异常处理：
+
+```c
+#include <iostream>
+#include <cstdlib>
+double div(double a, double b);
+int main(argc,char * argv[])
+{
+    double x, y, ans;
+    while (cin >> x >> y){
+		try{
+            ans=div(x,y);
+            cout<< Answer is << ans<< endl;
+        }
+        catch (char * e){
+            cout << e << endl;
+        }
+    }
+}
+double div(double a, double b， double *ans)
+{
+    if (b==0){
+        throw "b can't be zero!!!";
+    }
+   	return = a/b;
+}
+```
 
 
 
@@ -326,7 +354,7 @@ bool div(double a, double b)
 void test1(int n)
 {
     string msg("I love c++");
-    ...; //此处省略一万字代码
+    ...; //此处省略一万行代码
     if(somewrong)
         throw exception(); //抛出exception异常类
     ...; //此处省略一万行代码
@@ -345,7 +373,7 @@ void test2(int)
     ... ; //此处省略一万行代码
     if (somewrong)
         throw exception(); //抛出异常
-    ... ; //次数省略一万行
+    ... ; //此处省略一万行
     delete [] msg;
     return;
 }
