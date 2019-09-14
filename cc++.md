@@ -303,11 +303,48 @@ double div(double a, double b， double *ans)
 
 #### 类
 
+```c++
+class bad_div{
+    private:
+    	double v1;
+    	double v2;
+    public:
+    	bad_div(int a=0, int b=0):v1(a), v2(b){}
+};
+
+inline void bad_div::mesg(){
+    std::out<< v1 << "divided by" << v2 <<": v2 can't be Zero!";
+}
+
+
+//fun2()代码端:
+if(b==0){
+    throw bad_div(a, b);
+}
+
+    
+//fun1
+try{
+    fun2();
+}
+catch (bad_div & bg){//注意这里
+    bg.mesg();
+}
+```
+
+
+
 
 
 ## 异常原理和特性
 
 ### 栈退解
+
+return:
+
+1. C++将信息存放在栈中，处理函数调用。
+2. 将调用函数的指令地址存放到栈中，调用返回后，根据栈中地址确定返回地址
+3. 函数的参数也存放到栈中。返回时释放变量，如果是类，析构函数调用。
 
 ### 栈退解和return区别
 
