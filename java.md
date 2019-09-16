@@ -702,17 +702,21 @@ static ThreadLocal<Person> tl = new ThreadLocal<>();
 
 
 
-![1568523718714](/home/spade/Documents/markdown/java_pics/1568523718714.png)可能卖重了、买多了等
+<img src="/home/spade/Documents/markdown/java_pics/1568523718714.png" alt="1568523718714" style="zoom:150%;" />
 
 
 
-![1568523816266](/home/spade/Documents/markdown/java_pics/1568523816266.png)
+可能卖重了、买多了等
+
+
+
+<img src="/home/spade/Documents/markdown/java_pics/1568523816266.png" alt="1568523816266" style="zoom:150%;" />
 
 容器换成Vector后，由于vector是同步容器，所以不需要加锁了。但是，虽然size（）和remove()都是原子的, 但是判断和执行分离了。两个原子操作之间分离，可能被别的线程插入。
 
 
 
-![1568524042116](/home/spade/Documents/markdown/java_pics/1568524042116.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568524042116.png" alt="1568524042116" style="zoom:150%;" />
 
 判断和操作都加锁，可以。但是效率太低。
 
@@ -720,7 +724,7 @@ static ThreadLocal<Person> tl = new ThreadLocal<>();
 
 **使用同步容器**
 
-![1568524146866](/home/spade/Documents/markdown/java_pics/1568524146866.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568524146866.png" alt="1568524146866" style="zoom:150%;" />
 
 tickets.poll 从头拿出来，如果没拿到返回null
 
@@ -738,10 +742,11 @@ tickets.poll 从头拿出来，如果没拿到返回null
 
 不加锁的
 
-- HashMap 默认不加锁。可以往上加锁。Collections.synchronizedXXX()   传入容器，进行包装之后返回一个带锁的。List、Map等![1568525893012](/home/spade/Documents/markdown/java_pics/1568525893012.png)
+- HashMap 默认不加锁。可以往上加锁。Collections.synchronizedXXX()   传入容器，进行包装之后返回一个带锁的。List、Map等
+- <img src="/home/spade/Documents/markdown/java_pics/1568525893012.png" alt="1568525893012" style="zoom:150%;" />
 - TreeMap 默认排好顺序
 
-![1568524676277](/home/spade/Documents/markdown/java_pics/1568524676277.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568524676277.png" alt="1568524676277" style="zoom:150%;" />
 
 ## 写时复制CopyOnWrite
 
@@ -792,7 +797,7 @@ add //满了抛异常
 
 offer //返回boolean类型，自己判断. 可以设置阻塞时间
 
-![1568526939762](/home/spade/Documents/markdown/java_pics/1568526939762.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568526939762.png" alt="1568526939762" style="zoom:150%;" />
 
 ### DelayQueue
 
@@ -856,7 +861,7 @@ Runnable里面有run方法， Callable接口有call方法
 
 ### FixedThreadPool 定量的线程池
 
-![1568609026099](/home/spade/Documents/markdown/java_pics/1568609026099.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568609026099.png" alt="1568609026099" style="zoom:150%;" />
 
 一共启动6个线程，但是线程池的容量是5。第6个来的时候，在线程池维护的队列中等待，如果有线程空闲下来，线程不用停止重启，直接完成第6个的任务，而不是启动第6个线程。效率较高，线程重用（不用新人，一直用前5个）
 
@@ -877,7 +882,7 @@ isShutdown() 是否正在关闭，或者是否给关闭命令
 
 FutureTask
 
-![1568610891328](/home/spade/Documents/markdown/java_pics/1568610891328.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568610891328.png" alt="1568610891328" style="zoom:150%;" />
 
 
 
@@ -893,7 +898,7 @@ FutureTask
 
 
 
-![1568614722247](/home/spade/Documents/markdown/java_pics/1568614722247.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568614722247.png" alt="1568614722247" style="zoom:150%;" />
 
 ### newSingleThreadExecutor
 
@@ -903,7 +908,7 @@ FutureTask
 
 ### newSchedulePoolThreadPool
 
-![1568614965699](/home/spade/Documents/markdown/java_pics/1568614965699.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568614965699.png" alt="1568614965699" style="zoom:150%;" />
 
 每隔500毫秒执行。线程可以复用。定时执行
 
@@ -912,7 +917,7 @@ FutureTask
 ### newWorkStealingPool
 每个线程维护一个任务列表，当自己的任务完成之后，会去别的线程的任务列表里偷任务。
 
-![1568615367711](/home/spade/Documents/markdown/java_pics/1568615367711.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568615367711.png" alt="1568615367711" style="zoom:150%;" />
 
 是封装了ForkJoinPool
 
@@ -922,11 +927,11 @@ FutureTask
 
 ### newForkJoinPool
 
-![1568615599826](/home/spade/Documents/markdown/java_pics/1568615599826.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568615599826.png" alt="1568615599826" style="zoom:150%;" />
 
 
 
-![1568616267596](/home/spade/Documents/markdown/java_pics/1568616267596.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568616267596.png" alt="1568616267596" style="zoom:150%;" />
 
 
 
@@ -948,4 +953,4 @@ RecursiveAction没有返回值，不能汇总
 
 
 
-![1568617032930](/home/spade/Documents/markdown/java_pics/1568617032930.png)
+<img src="/home/spade/Documents/markdown/java_pics/1568617032930.png" alt="1568617032930" style="zoom:150%;" />
