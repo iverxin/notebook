@@ -28,8 +28,9 @@ void _exit(int status);
 ```
 
 - 区别：
-  - exit会执行标准IO库的清理关闭操作，对所有流fclose，缓冲区会冲洗，写到文件上。
-
+  
+- exit会执行标准IO库的清理关闭操作，对所有流fclose，缓冲区会冲洗，写到文件上。
+  
 - 参数status：`终止状态`。大多数系统shell会提供检查终止状态的方法（例如，echo $? 是输出刚才执行的程序的终止状态）。当然也可以不定义终止状态。
 
   对于main，return(0);和exit(0); 是等价的。$? 是0
@@ -107,3 +108,4 @@ spade@spade-PC:~$ size a.out
 
 ```
 
+a
