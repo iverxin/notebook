@@ -1,3 +1,4 @@
+vnote_backup_file_826537664 /home/spade/Documents/markdown/unix_programing_notes/7_Therad_environment.md
 [TOC]
 
 
@@ -251,21 +252,11 @@ while (dosomething){
 
 ```
 
-关于跳转的总结：
 
-- 对于变量，跳转回来保存的变量值是`跳转之前setjmp的值`还是出错的时候`已经处理过的值`？
-
-  看情况。大多数实现不回滚自动变量和存储器的值，所有的标准都称他们是不确定的。`全局变量`、`静态变量`、`易失变量(volatile)`存储的是最近一次更新的值。在某个系统的setjmp说：存放在存储器的变量有longjmp时的时，而存放在CPU和浮点存储器中的变量则回复调用setjmp时的值。编译器不进行优化，变量一般都放在存储器中，进行优化volatile仍然放在存储器中。	如果想要编写一个非局部跳的可移植程序要声明volatile。
-
-- 自动变量(存放在栈帧中的变量)的潜在问题：
-
-  跳回之后，栈并没有被处理，指是指针改变了位置。这个栈的空间将被下次调用的函数占用，如果打开过标准IO流，且缓冲区是在栈中，那么这个流仍然会用这个栈当做缓冲区，产生冲突。所以一定要动态分配缓冲区，而且不要忘记释放。
 
 ## getrlimit和setrlimit
 
-每个进程都有一组资源限制，限制获取某些资源的大小，这些限制一般都是系统初始化时由0进程建立的，然后后续进程进行集成。
-
-可以设置下面两个函数进行查询和设置：
+每个进程都有一组资源限制，可以设置下面两个函数进行查询和设置：
 
 ```c
 //sys/resource.h
@@ -274,35 +265,8 @@ int setrlimit(int resource, const struct rlimit *rlptr);
 // 0 和非0
 ```
 
-
-
-```C
-struct rlimit{
-    rlim_t rlim_cur; //软限制
-    rlim_t rlim_max; //硬限制
+rlimit{
+    
 }
-```
 
-遵循规则：
-
-- 任何进程都可以更改他的软限制小鱼等于硬限制
-- 任何进程可以降低硬限制，但是必须大于等于软限制。普通用户这个操作不可逆
-- 只有超级用户能够提高硬限制。
-
-RLIM_INFINITY 是无限量的限制。
-
-
-
-resource取值：
-
-![1568687804092](linux_programing_pics/7/1568687804092.png)
-
-- RLIMIT_AS 进程可用存储空间最大长度(字节)
-- RLIMIT_CORE core文件最大字节数，取0为阻止创建
-- RLIMIT_CPU CPU时间最大值(秒)。
-- RLIMIT_FSIZE 可创建文件的最大字节长度。超过软限制就向该进程发送SIGFSZ信号。
-- RLIMIT_MEMLOCK 进程可使用mclock(2)能锁定在存储空间的最大字节数
-- RLIMIT_MSGQUEUE 进程为POSIX可分配的最大存储字节数
-- RLIMIT_NICE  影响进程的调度优先级。
-- ![1568688135782](linux_programing_pics/7/1568688135782.png)
 
