@@ -36,7 +36,7 @@ int fstatat(int fd, const char *restrict pathname, struct stat * restrict buf, i
   struct stat{
   ```
 
-  ![1567146996825](/home/spade/Documents/markdown/linux_programing_pics/1566893155487.png)
+  ![1567146996825](linux_programing_pics/1566893155487.png)
 
   根据实际定义可能结构稍有不同。
 
@@ -60,7 +60,7 @@ int fstatat(int fd, const char *restrict pathname, struct stat * restrict buf, i
 
 文件类型信息在stat结构中的st_mode 中。
 
-![1567147837382](/home/spade/Documents/markdown/linux_programing_pics/1567147837382.png)
+![1567147837382](linux_programing_pics/1567147837382.png)
 
 图片来自unix环境高级编程。
 
@@ -316,7 +316,7 @@ int ftruncate(int fd, off_t length);
 
 i结点是固定长度的`记录项`，包含文件的大部分信息。
 
-![1567399266621](/home/spade/Documents/markdown/linux_programing_pics/1567399266621.png)
+![1567399266621](linux_programing_pics/1567399266621.png)
 
 
 
@@ -325,7 +325,7 @@ i结点是固定长度的`记录项`，包含文件的大部分信息。
 - i结点包含了文件相关的所有信息。stat中大多数信息来自i结点。
 - 一个目录项不能指向另一个文件系统的i结点，这就是为什么ln的硬链接不能跨越文件系统。（软连接可以)
 
-![1567399295325](/home/spade/Documents/markdown/linux_programing_pics/1567399295325.png)
+![1567399295325](linux_programing_pics/1567399295325.png)
 
 ## link/linkat 链接文件
 

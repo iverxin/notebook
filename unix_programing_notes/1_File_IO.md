@@ -70,7 +70,7 @@ open和openat的区别：
 
 openat函数是POSIX.1中增加的。可以让线程使用相对路径名打开文件。在多线程中，所有线程共享当前工作目录，所以很难让不同线程同时工作在不同的目录中。同时，openat可以避免time-of-check-to-time-of-use 错误。
 
-![1566893155487](/home/spade/Documents/markdown/linux_programing_pics/1566893155487.png)
+![1566893155487](linux_programing_pics/1566893155487.png)
 
 ## creat 创建文件(可用open代替)
 
