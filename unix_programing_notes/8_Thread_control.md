@@ -184,3 +184,28 @@ options：0或者下面按位与的结果
 
 ![1568869196159](pics/8_Thread_control/1568869196159.png)
 
+## wait3和wait4
+
+```c
+//sys/types.h sys/wait.h  sys/time.h  sys/resource.h
+pid_t wait3(int *statloc, int options, struct rusage *rusage);
+pid_t wait(pid_t pid, int *statloc, int options, struct rusage *rusage);
+//成功返回ID，出错-1
+
+```
+
+允许内核返回 由终止进程及其子进程使用资源的情况。
+
+statloc是终止状态。
+
+<img src="pics/8_Thread_control/1568954244817.png" alt="1568954244817" style="zoom:150%;" />
+
+
+
+## exec程序调用
+
+exec不会改变进程ID，只是用新程序替换了当前进程的正文段、数据段、堆、栈段
+
+![1568954676968](pics/8_Thread_control/1568954676968.png)
+
+- filename里包含/，就视为路径名
