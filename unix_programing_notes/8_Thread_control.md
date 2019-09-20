@@ -208,4 +208,126 @@ exec不会改变进程ID，只是用新程序替换了当前进程的正文段�
 
 ![1568954676968](pics/8_Thread_control/1568954676968.png)
 
-- filename里包含/，就视为路径名
+- filename里包含/，就视为路径名。否则按照path环境变量搜索可执行文件。如果该文件不是编译器产生的可执行文件，就认为他是shell脚本，尝试使用/bin/sh + filename 作为shell的输入。
+- 参数表传递：函数名 l表示list，v表示vector。 
+  - execl、execlp、execle要求将新程序的每个命令参数都说明为一个单独的参数。这种参数表以空指针结尾。
+  - execv、execvp、execve和fexecve 是应县构造一个指向各个参数的指针数组，然后将该指针数组作为4哥函数的参数。
+- 以e结尾的函数execle，execve和fexecve可以传递一个指向环境字符串的数组指针。其他的是调用进程中environ变量赋值现有的环境。如果系统支持setenv和putenv这样的函数，可以更改子进程不影响父进程的状态。
+
+在ISO C原型中，所有命令行参数、空指针和envp指针都用省略号...表示。
+
+![1568959734546](pics/8_Thread_control/1568959734546.png)
+
+### 调用exec后新程序从父进程中保留的属性
+
+- 各种ID
+- 控制终端
+- 闹钟尚余留的时间
+- 当前工作目录
+- 根目录
+- 文件模式创建屏蔽字
+- 文件锁
+- 进程信号屏蔽
+- 未处理信号
+- 资源限制
+- nice值
+- tms_utime tms_stime tms_cutime tms_cstime
+
+对打开文件的处理：
+
+​	这与文件描述符的执行时关闭标志值有关。FD_CLOEXEC，进程中每个打开描述符都有一个执行时关闭表示。如果设置了该表示，执行exec时关闭该描述符，否则仍然打开。系统默认是exec后仍然保持打开，可以使用fcntl设置。
+
+![1568960201847](pics/8_Thread_control/1568960201847.png)
+
+### 例程：
+
+<img src="pics/8_Thread_control/1568960410598.png" alt="1568960410598" style="zoom:150%;" />
+
+<img src="pics/8_Thread_control/1568960426270.png" alt="1568960426270" style="zoom:150%;" />
+
+
+
+## 更改用户ID和更改组ID
+
+两个重要概念：
+
+`特权`：比如能否改变当前日期的表示方法
+
+`访问控制`：能否读写一个特定文件
+
+他们的控制都是基于用户ID和用户组ID的。在设计应用时，要试图使用最小特权模型。
+
+## 使用setuid和setgid设置实际用户ID和有效组ID
+
+```c
+int setuid(uid_t uid);
+int setgid(gid_t gid);
+//0  -1
+```
+
+- root用户可以随便设
+- 要设置的uid等于实际用户ID，setuid只将有效用户ID设置为uid
+
+- 否则设置为errno为EPERM，返回-1
+
+
+
+其他注意事项
+
+- 只有root能够更改实际用户ID。
+- 仅当程序文件设置了用户ID位，函数才设置有效用户ID，否则exec函数不会改变有效用户ID。任何时候都可以调用setuid。
+- ![1568961366004](pics/8_Thread_control/1568961366004.png)
+
+
+
+![1568961409756](pics/8_Thread_control/1568961409756.png)
+
+
+
+
+
+### 组ID
+
+略。后补2019.9.20
+
+
+
+## 解释器文件
+
+文本文件起始行：
+
+```bash
+#！ pathname[optional-argument]
+例如：
+#! /bin/sh    
+```
+
+#!后面的空格是可选的。
+
+这种文件的识别是内核作为exec系统调用的一部分来完成的。内核调用exec函数进程启动第一行指定的程序，来解释该文件。
+
+**要写全局路径，因为不对第一行进行PATH搜索**
+
+
+
+
+
+## system函数，执行命令行
+
+```c
+//stdlib.h
+int system(const char *cmdstring);
+```
+
+system在其实现中调用了fork exec waitpid，所以他有3种返回值
+
+- fork失败或者waitpid返回除了EINTR之外的错误，system返回-1，设置errno指示错误类型
+- exec失败，代表shell不能执行，其返回值如同shell执行exit(127)一样。
+- 都成功，返回shell终止状态。
+
+
+
+使用system而不是使用fork和exec有点：
+
+​	system进行了各种出错处理和信号处理。
+
