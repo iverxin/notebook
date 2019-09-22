@@ -331,3 +331,101 @@ system在其实现中调用了fork exec waitpid，所以他有3种返回值
 
 ​	system进行了各种出错处理和信号处理。
 
+
+
+## 进程会计
+
+不同系统进程会计实现略有不同，没有标准的协议规定。这里略过，有需要再补充
+
+进程会计（progress accounting）是进程结束后内核写一个会议记录。包括cpu时间总量，用户ID和组ID，启动时间等。
+
+
+
+
+
+## 用户标识
+
+任何进程都可以得到到实际用户ID和有效用户ID和组ID。如果希望找到运行该用户的登录名，我们可以调用getpwuid(getuid())。
+
+但是系统允许一个用户有多个登录名，以对应不同的shell，不用用户名共用同一个用户ID。这时候可以使用，getlogin函数获取登录名
+
+```c
+//unistd.h
+char *getlogin(void);
+//成功返回字符串指针，出错NULL
+```
+
+获取登录时的用户名后，就可以用getpwnam获取口令文件中相应的用户记录，确定用户其他信息，如登录使用的shell
+
+
+
+## 进程调度
+
+unix系统对进程调度是通过优先级。调度策略和调度优先由内核确定。可以通过调整nice值来调整优先级。**只有特权进程**允许提高调度权限。
+
+nice值越高，越友好，占用cpu时间越短。
+
+nice值越低，越紧急，占用cpu时间越多。
+
+nice值的范围 0~(2*NZERO)-1 ，有些是0~(2*NZERO)
+
+
+
+**linux可以通过sysconf(_SC_NZERO)获取nzero的值**，通过一下例子可以让程序更健壮。
+
+```c
+#if defined(NZERO)
+	nzero=NZERO;
+#elif defined(_SC_NZERO)
+	nzero=sysconf(_SC_NZERO);
+#else
+#error NZERO undefined
+#endif
+```
+
+
+
+### 更新修改nice值， nice
+
+```c
+//unistd.h
+int nice(int incr);
+//成功返回新的nice值，出错返回-1，同时errno不为0
+```
+
+- incr被加到nice值上。 如果太大系统会降低到最大合法值，不给出提示。最小同理。
+
+注意：-1可能是合法的返回值，所以每次调用的nice之前要清除errno，如果nice返回-1需要检查errno的值
+
+
+
+### 获取进程的nice值 getpriority
+
+```c
+//sys/resource.h
+int getpriority(int which, id_t who);
+//成功返回-NZERO~NZERO-1之间的nice值，出错-1
+```
+
+- which取值如下，控制如何解释who参数
+  - ​	PRIO_PROCESS 表示进程
+  - PRIO_PGRP表示进程组
+  - PRIO_USER表示用户ID
+
+- who选择一个或多个进程，如果为0，表示调用进程、进程组、或者用户。
+
+
+
+### setpriority 为进程、进程组、特定用户ID的所有进程设置优先级
+
+```c
+//sys/resource.h
+int setpriority(int which, id_t who, int value);
+//0 -1
+```
+
+value增加到NZERO，编程新的nice值
+
+
+
+一般，子进程从父进程中集成nice值（FreeBSD 8.0 Linux3.2 MacOs X Solaris 10）
