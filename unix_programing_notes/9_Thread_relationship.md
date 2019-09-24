@@ -106,3 +106,26 @@ int setpgid(pid_t pid, pid_t pgid);
 
 
 大多数作业控制shell中，fork之后调用setpgid，父进程设置子进程的进程组ID，同时子进程自己也要设置一下进程组ID，因为fork后谁先执行无法控制。
+
+
+
+## 会话
+
+### 概念
+
+会话(session)是一个或多个集成的集合。可以包含多个进程组
+
+![1569292208361](pics/9_Thread_relationship/1569292208361.png)
+
+通常是由shell的管道将集成编成一组。
+
+
+
+### setsid 建立会话
+
+```c
+//unistd.h
+pid_t setsid(void);
+//成功返回进程组ID，出错返回-1
+```
+
