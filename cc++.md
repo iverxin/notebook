@@ -271,7 +271,7 @@ int main(argc,char * argv[])
         }
     }
 }
-double div(double a, double b， double *ans)
+double div(double a, double b)
 {
     if (b==0){
         throw "b can't be zero!!!";
