@@ -2,14 +2,29 @@
 
 # 1. C4.5
 
-## Feature：
+## 1.1 Feature：
 
 1. 有监督学习
-2. 
+2. ID3的一种决策树诱导算法。ID3被称为迭代分解器(iterative dichotomizers)第三代。
+
+3. 除了诱导出决策树，还可以将决策树转换成具有良好理解性的规则。
+4. 通过C4.5的后剪枝操作得到的分类器不能在精确地被转换会决策树。
 
 ### Advantage
 
+- 良好的可理解性的规则
+
 ### Disadvantage
+
+
+
+## 1.2 Describe
+
+遵循传统的递归模式，首先用根节点表示一定量的数据集，con
+
+## 2.1 Scope of application
+
+- 处理分类问题
 
 
 
