@@ -233,7 +233,7 @@ ID3 ：对于连续变量必须进行离散化，但是离散化后的变量会�
 
 - 可以对复杂和非线性的数据建模。
 
-# 2. K-means
+# 3. K-means
 
 ## Feature：
 
@@ -245,15 +245,23 @@ ID3 ：对于连续变量必须进行离散化，但是离散化后的变量会�
 
 
 
-# 3. SVM
+# 4. SVM
 
 
 
-# 4. Apriori
+# 5. Apriori
+
+## Describe
+
+Apriori算法是用来进行`关联分析`的。所谓关联分析，是在大规模的数据中寻找有趣关系的任务。这些关系可能是`频繁项集`或者是`关联规则`
+
+> 频繁项集(frequent item sets)：经常一起出现的的物品的集合。
+>
+> 关联规则(association rules)：两种物品之间可能存在很强的关系。
 
 
 
-# 5. EM 数学太多
+# 6. EM 数学太多
 
 ## Describe
 
@@ -265,17 +273,70 @@ Advantages：
 -　实现简单
 -　可靠全局收敛
 
-# 6. PageRank 网搜
+# 7. PageRank 网搜
 
 
 
-# 7. AdaBoost
+# 8. AdaBoost
+
+## Describe
+
+AdaBoost是boosting方法中的一个比较流行的版本。AdaBoost(adaptive boosting 自适应boosting的缩写)
+
+在说boosting之前，先了解一下和boosting很像的技术，bagging。
+
+### bagging 基于数据随机重抽样的分类器构建方法
+
+bagging方法，也称`自举汇聚法(boostrap aggregating)`。从原始数据集中随机取出S个新的数据集。每个新的数据集和原始数据集大小相等，数据集里面的example都是随机从原始数据集中取出，且**可以重复**(如果不能重复就和原始数据集相同了)。
+
+得到带有重复example的S个数据集后，利用某个学习算法，训练S个分类器。当对新的数据进行分类时，分别喂入S个分类器中，得出S个结果，选择结果中最多作为最终的类别。
+
+更先进的bagging方法有很多，如`随机森林(random forest)`。
 
 
 
-# 8. KNN
+### boosting
 
-## 8.1 Feature
+boosting和bagging很像。但区别是boosting不同的分类器通过串行训练获得，每个分类器都根据已经训练出的分类器的性能进行训练，通过集中关注被已有分类器错分的数据获得最新的分类器。
+
+boosting的结果通过加权求和得到。这和bagging不同。
+
+## Features
+
+### Advantages
+
+- 泛化错误率低，容易实现
+- 可以应用在大部分分类器上，无参数调整
+
+### Disadvantages:
+
+- 对离群点敏感
+
+## Theory
+
+### 方法：
+
+1. 对于数据集每个example，都赋予一个权重，构成权重向量D，且初始化为相同的值；
+2. 首先训练出一个弱分类器1，计算错误率$\epsilon$；
+3. 每个分类器都有一个分类器权重值$\alpha$，计算最终结果需要每个分类器的结果都乘以自己的权重最后加和。计算$\alpha$;
+4. 用该数据再次训练这个弱分类器，得到新的分类器2, 且重新调整每个样本的权重。*第一次分对的样本权重会降低，分错的样本权重会上升。*
+5. 可以不断迭代，直到满足错误率或者达到规定的弱分类器数目为止。
+
+错误率：$\epsilon=\frac{未正确分类的样本数}{所有样本数}$
+
+分类器的权重:  $\alpha=\frac{1}{2}ln(\frac{1-\epsilon}{\epsilon})$
+
+权重更新公式：
+
+- example被正确分类：$D^{(t+1)}_i=\frac{D_i^{(t)}e^{-\alpha}}{\sum(D)}$
+
+- example没有被正确分类：$D^{(t+1)}_i=\frac{D_i^{(t)}e^{\alpha}}{\sum(D)}$
+
+  
+
+# 9. KNN
+
+## 9.1 Feature
 
 采用测量不同特征值之间的距离方法来进行分类。
 
@@ -293,13 +354,13 @@ Advantages：
 
 - 无法给出数据的内在含义
 
-## 8.2 Scope of application
+## 9.2 Scope of application
 
 数值型和标称型
 
 
 
-## 8.3 Theory
+## 9.3 Theory
 
 存在**带标签**的训练样本集，输入没有标签的新数据后，`新数据`的每个特征与`样本集`中数据对应的特征进行比较，然后提取样本集中特征最相似的分类的标签。一般只选择前k个最相似的数据，所以叫做k-邻近算法。
 
@@ -309,7 +370,7 @@ Advantages：
 
 
 
-# 9. Naive Bayes
+# 10. Naive Bayes
 
 
 
