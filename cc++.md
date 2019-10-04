@@ -40,7 +40,7 @@ here is the function!
 - 将某个复杂声明进行部分替换，简化复杂的声明。
 
   ```c
-  //声明两个max_Func_p和min_Func_p两个哈数指针
+  //声明两个max_Func_p和min_Func_p两个函数指针
   int (*max_Func_p)(int,int);
   int (*min_Func_p)(int,int);
   //简化
